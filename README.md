@@ -270,3 +270,11 @@ elif only_large_table_available:
 - **Cons**:
   - **Longer wait for small groups**: Small parties might experience minor initial delays.
   - **Tuning complexity**: The hold limit threshold must be dynamically adjusted (e.g., longer holds during dinner rush, shorter/zero holds during off-peak hours).
+
+---
+
+## 11. Application Screenshot
+
+Here is a preview of the Gourmet Queue interactive dashboard in action (Light Theme: White & Sky Blue accent):
+
+![Gourmet Queue Dashboard](./screenshot.png)
