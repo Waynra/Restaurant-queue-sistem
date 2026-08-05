@@ -36,12 +36,15 @@ function TableCard({ table, now, onDragOver, onDrop, onServe, isServePending }: 
 
     // Yellow if less than 5 minutes (300,000 ms) left, otherwise Red
     if (remainingMs <= 300000) {
-      statusColor = 'border-amber-500/40 bg-amber-500/5 text-amber-400 shadow-amber-500/5';
-      badgeColor = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+      statusColor = 'border-amber-200 bg-amber-50/40 text-amber-700 shadow-sm';
+      badgeColor = 'bg-amber-50 text-amber-700 border-amber-200';
     } else {
-      statusColor = 'border-rose-500/40 bg-rose-500/5 text-rose-400 shadow-rose-500/5';
-      badgeColor = 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+      statusColor = 'border-rose-200 bg-rose-50/40 text-rose-700 shadow-sm';
+      badgeColor = 'bg-rose-50 text-rose-700 border-rose-200';
     }
+  } else {
+    statusColor = 'border-emerald-200 bg-emerald-50/40 text-emerald-700 shadow-sm';
+    badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
   }
 
   const handleDragEnter = (e: React.DragEvent) => {
@@ -67,15 +70,15 @@ function TableCard({ table, now, onDragOver, onDrop, onServe, isServePending }: 
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`border rounded-2xl p-5 shadow-lg transition-all duration-300 relative overflow-hidden group flex flex-col justify-between h-56 ${statusColor} ${
-        isDragOver ? 'ring-2 ring-indigo-500 ring-offset-2 ring-offset-slate-950 scale-[1.02]' : ''
+      className={`border rounded-2xl p-5 shadow-sm transition-all duration-300 relative overflow-hidden group flex flex-col justify-between h-56 ${statusColor} ${
+        isDragOver ? 'ring-2 ring-sky-500 ring-offset-2 ring-offset-slate-50 scale-[1.02]' : ''
       }`}
     >
       <div>
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h3 className="text-xl font-bold text-slate-100">{table.name}</h3>
-            <p className="text-xs text-slate-400 font-medium">Capacity: {table.capacity} Seats</p>
+            <h3 className="text-xl font-bold text-slate-800">{table.name}</h3>
+            <p className="text-xs text-slate-500 font-medium">Capacity: {table.capacity} Seats</p>
           </div>
           <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${badgeColor}`}>
             {isOccupied ? (remainingMs <= 300000 ? 'Almost Free' : 'Occupied') : 'Available'}
@@ -85,23 +88,23 @@ function TableCard({ table, now, onDragOver, onDrop, onServe, isServePending }: 
         {isOccupied ? (
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="p-1.5 bg-slate-950 rounded-lg text-slate-300">
+              <div className="p-1.5 bg-slate-100 rounded-lg text-slate-600">
                 <Coffee className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-200">{activeCustomer.name}</p>
-                <p className="text-xs text-slate-400">Party of {activeCustomer.party_size}</p>
+                <p className="text-sm font-semibold text-slate-800">{activeCustomer.name}</p>
+                <p className="text-xs text-slate-500">Party of {activeCustomer.party_size}</p>
               </div>
             </div>
 
             {/* Live Progress Bar */}
             {activeCustomer.started_at && activeCustomer.ended_at && (
               <div className="w-full">
-                <div className="flex justify-between text-[10px] text-slate-400 font-medium mb-1">
+                <div className="flex justify-between text-[10px] text-slate-500 font-medium mb-1">
                   <span>Progress</span>
-                  <span className="font-semibold text-slate-300">{formattedTime} left</span>
+                  <span className="font-semibold text-slate-600">{formattedTime} left</span>
                 </div>
-                <div className="h-1.5 bg-slate-950 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-1000 ${
                       remainingMs <= 300000 ? 'bg-amber-500' : 'bg-rose-500'
@@ -121,8 +124,8 @@ function TableCard({ table, now, onDragOver, onDrop, onServe, isServePending }: 
             )}
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-4 border border-dashed border-slate-800 rounded-xl bg-slate-950/20 text-slate-500 group-hover:border-slate-700 transition-all duration-300">
-            <UserCheck className="w-6 h-6 mb-1 text-slate-600 group-hover:text-slate-500" />
+          <div className="flex flex-col items-center justify-center py-4 border border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-400 group-hover:border-slate-300 transition-all duration-300">
+            <UserCheck className="w-6 h-6 mb-1 text-slate-400 group-hover:text-slate-500" />
             <p className="text-xs">Drag queue customer here</p>
           </div>
         )}
@@ -132,7 +135,7 @@ function TableCard({ table, now, onDragOver, onDrop, onServe, isServePending }: 
         <button
           onClick={() => onServe(activeCustomer.id)}
           disabled={isServePending}
-          className="mt-4 w-full flex items-center justify-center gap-2 bg-slate-950/80 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 border border-slate-800 text-slate-300 font-semibold py-2 px-3 rounded-xl transition-all duration-200 text-xs disabled:opacity-50"
+          className="mt-4 w-full flex items-center justify-center gap-2 bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-xl shadow-sm transition-all duration-200 text-xs disabled:opacity-50"
         >
           <UserMinus className="w-4 h-4" />
           <span>Complete Meal</span>
@@ -199,11 +202,11 @@ export default function TableGrid({ tables, onManualSeatError }: TableGridProps)
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
             <span>Restaurant Floor</span>
-            <Flame className="w-5 h-5 text-indigo-400" />
+            <Flame className="w-5 h-5 text-sky-500" />
           </h2>
-          <p className="text-xs text-slate-400">Interactive live dining status & layout</p>
+          <p className="text-xs text-slate-500">Interactive live dining status & layout</p>
         </div>
       </div>
 
