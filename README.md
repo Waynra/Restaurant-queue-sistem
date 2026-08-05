@@ -218,3 +218,55 @@ npx vitest run
 1. **Countdown Syncing via Date.now()**: Rather than implementing manual count ticking in component intervals (which drifts when tabs lose focus or lag), we calculate the difference between the customer's database `ended_at` timestamp and the browser's current `Date.now()`. We trigger a lightweight global tick state every second to prompt card re-renders.
 2. **Auto-seating on Checkout**: Freeing a table does not pull the oldest customer (FIFO). Instead, it searches the waiting queue, filters for customers whose party size is <= the freed table's capacity, and seats the highest priority customer (largest party size first).
 3. **Manually Seating Endpoint**: To support persistence for Drag & Drop actions, we implemented the `/api/seat` endpoint which validates the seating operation (checking status and capacity) before saving.
+
+---
+
+## 9. CI/CD
+
+This project uses **GitHub Actions** for continuous integration.
+[![CI/CD Pipeline](https://github.com/Waynra/Restaurant-queue-sistem/actions/workflows/ci.yml/badge.svg)](https://github.com/Waynra/Restaurant-queue-sistem/actions/workflows/ci.yml)
+
+The pipeline is triggered automatically on every `push` and `pull_request` to the main branches. It executes the following steps sequentially inside a unified workflow runner:
+1. **Checkout Repository**: Pulls down the latest code version.
+2. **Setup PHP**: Sets up PHP version 8.3 with necessary extensions (sqlite, mbstring, pdo).
+3. **Install Dependencies**: Downloads Composer packages with optimized autoloading.
+4. **Environment Setup**: Configures testing `.env` variables and registers application encryption key.
+5. **Run Backend Tests**: Runs migrations and boots the PHPUnit feature and unit test suites.
+6. **Setup Node.js**: Installs Node 20 environment with npm cache enabled.
+7. **Run Frontend Tests**: Runs Vitest component unit test suites in non-interactive mode (`npm test`).
+8. **Build Assets**: Compiles production-optimized JS/CSS and creates the required manifest map.
+
+---
+
+## 10. Bonus – Revenue Optimization
+
+### Problem Statement
+In a busy restaurant, seat utilization directly maps to revenue. If a small party (e.g., 2 guests) arrives when only a large table (e.g., Table D with a capacity of 8) is vacant, seating them immediately resolves their wait but creates an inefficiency:
+- Six potential seats are wasted ("oversize seating").
+- If a large party (e.g., 7 or 8 guests) subsequently arrives, they are forced into the waiting queue, leading to longer queue lines, prospective client loss, and reduced average transaction size.
+
+### Proposed Strategy: "Soft Hold" on Large Tables
+Instead of immediately seating a small party at a large table, we implement a **Soft Hold** policy:
+- Keep the large table reserved for large parties for a short buffer period (e.g., `HOLD_LIMIT = 5 minutes`).
+- If an eligible large party arrives within this window, they are seated immediately, maximizing capacity usage.
+- If the hold timer expires and no large party arrives, the hold is released, and the table is offered to the waiting small party to maintain high table turnover.
+
+### Strategy Pseudocode
+```python
+if small_table_available:
+    assign()
+elif only_large_table_available:
+    if waiting_time < HOLD_LIMIT:
+        keep_waiting()  # Maintain hold to reserve for larger groups
+    else:
+        assign_large_table()  # Release hold to prevent empty table idle time
+```
+
+### Trade-Off Analysis
+- **Pros**:
+  - **Better capacity utilization**: Dramatically increases seat occupancy during rush hours.
+  - **Higher ticket size / revenue**: Prioritizes higher-paying large groups.
+  - **Optimized queue management**: Prevents large groups from walking away due to excessive wait times.
+- **Cons**:
+  - **Longer wait for small groups**: Small parties might experience minor initial delays.
+  - **Tuning complexity**: The hold limit threshold must be dynamically adjusted (e.g., longer holds during dinner rush, shorter/zero holds during off-peak hours).

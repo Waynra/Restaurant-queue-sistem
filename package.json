@@ -5,8 +5,8 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "test": "vitest",
-        "test:run": "vitest run",
+        "test": "vitest run",
+        "test:watch": "vitest",
         "test:ui": "vitest --ui"
     },
     "devDependencies": {
