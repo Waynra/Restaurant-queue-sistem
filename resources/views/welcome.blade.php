@@ -10,7 +10,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
         @vite(['resources/css/app.css', 'resources/js/app.tsx'])
     </head>
-    <body class="h-full bg-slate-950 text-slate-100 antialiased overflow-hidden font-sans">
-        <div id="app" class="h-full"></div>
+    <body class="bg-slate-50 antialiased font-sans">
+        <div id="app"></div>
     </body>
 </html>
